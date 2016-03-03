@@ -1,0 +1,12 @@
+name: fiche
+summary: Fiche is an open source command line pastebin server.
+maintainer: James Beedy <jamesbeedy@gmail.com>
+description: |
+  Fiche is an open source command line pastebin server. It can be found here:
+  https://github.com/solusipse/fiche
+tags:
+- ops
+provides:
+  website:
+    interface: http
+subordinate: false

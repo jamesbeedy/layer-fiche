@@ -1,0 +1,16 @@
+includes:
+- layer:basic
+- layer:nginx
+- interface:http
+options:
+  basic:
+    packages:
+    - autoconf
+    - automake
+    - make
+    - gcc
+    - supervisor
+    - git
+  nginx: {}
+  fiche: {}
+is: fiche

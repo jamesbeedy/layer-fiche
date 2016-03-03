@@ -1,0 +1,9 @@
+server {
+        listen 0.0.0.0:{{ port }};
+        charset utf-8;
+        location / {
+                root /srv/fiche/;
+                index index.html index.htm index.txt;
+                try_files $uri $uri/ =404;
+        }
+}
