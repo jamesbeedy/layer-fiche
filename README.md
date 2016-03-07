@@ -11,10 +11,12 @@ To deploy fiche using juju:
 
     juju deploy fiche
 
-You can then use netcat to do things like 
+This will deploy fiche server to listen on port 9999 by default. 
+
+You can then use netcat to do things like
     
 ```bash
-cat file.txt | nc <ficheserver> <port>
+cat file.txt | nc <ficheserver> 9999
 ```
 
 # Configuration
@@ -22,7 +24,7 @@ cat file.txt | nc <ficheserver> <port>
 Once you have deployed fiche you can add an alias to your .bashrc to make fiche slightly more usable:
 
 ```bash
-echo 'alias tb="nc <ficheserver> <port>"' >> .bashrc
+echo 'alias tb="nc <ficheserver> 9999"' >> .bashrc
 ```
 
 Then you can:

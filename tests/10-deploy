@@ -7,7 +7,7 @@ import unittest
 import socket
 
 
-def test_netcat(host, port, content):
+def netcat(host, port, content):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, int(port)))
     s.sendall(content.encode())
@@ -40,12 +40,22 @@ class TestDeployment(unittest.TestCase):
         cls.unit = cls.deployment.sentry.unit['fiche/0']
         cls.ipaddr = cls.unit.info['public-address']
 
+    def test_1_verify_netcat(self):
+        nc_resp = netcat(self.ipaddr, 9999, "test-txt")
+        nc_addr = str(nc_resp, "UTF-8").strip('\n')
 
-     # This should succeed whether or not I have any code deployed
-     def test_1_verify_homepage(self):
-        #response = requests.get(self.ipaddr)
-        #response.raise_for_status()
-        pass
+        response = requests.get(nc_addr)
+        # Check for 500
+        response.raise_for_status()
+
+        text = response.text.find('test-txt')
+        found_text = text != -1
+
+        if found_text:
+            print ('Fiche is running on %s' % self.ipaddr)
+        else:
+            message = 'fiche is not running on %s' % self.ipaddr
+            amulet.raise_status(amulet.FAIL, msg=message)
 
 
 if __name__ == '__main__':
