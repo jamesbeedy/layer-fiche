@@ -1,16 +1,14 @@
 includes:
 - layer:basic
 - layer:nginx
+- layer:git-deploy
 - interface:http
 options:
+  git-deploy:
+    target: "/srv/fiche"
   basic:
     packages:
     - autoconf
     - automake
     - make
     - gcc
-    - supervisor
-    - git
-  nginx: {}
-  fiche: {}
-is: fiche

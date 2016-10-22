@@ -9,4 +9,6 @@ tags:
 provides:
   website:
     interface: http
+series:
+  - 'xenial'
 subordinate: false

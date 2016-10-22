@@ -20,3 +20,13 @@ options:
     type: int
     default: 8192
     description: Buffer size
+  repo:
+    type: string
+    default: "https://github.com/solusipse/fiche.git"
+    description: The repository to clone from, this is required
+  key-required:
+    type: boolean
+    default: false
+    description: |
+      This should be set to true to ensure that a deploy key is
+      deployed if necessary

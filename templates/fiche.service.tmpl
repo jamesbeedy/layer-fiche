@@ -1,0 +1,13 @@
+[Unit]
+Description=Fiche
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+ExecStart=/usr/local/bin/fiche -d {{ fiche_server_address }} -o /srv/fiche -s {{ slug_size }} -B {{ buffer_size }} -p {{ fiche_server_port }}
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
