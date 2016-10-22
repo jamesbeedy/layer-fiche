@@ -12,3 +12,4 @@ options:
     - automake
     - make
     - gcc
+repo: "https://github.com/jamesbeedy/layer-fiche"
