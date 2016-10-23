@@ -1,3 +1,4 @@
+import pwd
 import os
 import subprocess
 
@@ -18,11 +19,23 @@ from charmhelpers.core.hookenv import (
     unit_public_ip
 )
 
-from charmhelpers.core.host import chdir
+from charmhelpers.core.host import (
+    chdir,
+    service_running,
+    service_start,
+    service_restart
+)
 
-from nginxlib import configure_site
+from charms.layer.nginx import configure_site
 
 from charms.layer import options
+
+
+def start_restart():
+    if service_running("fiche"):
+        service_restart("fiche")
+    else:
+        service_start("fiche")
 
 
 @when('codebase.available')
@@ -38,8 +51,12 @@ def install_fiche():
     # Build fiche
     with chdir(options('git-deploy').get('target')):
         subprocess.call('make', shell=False)
-        subprocess.call('make install'.split(), shell=False)
-        subprocess.call('rm -rf /srv/fiche/*'.split(), shell=False)
+        subprocess.call('make install PREFIX=/usr/local/bin'.split(),
+                        shell=False)
+    subprocess.call('rm -rf /srv/fiche/*'.split(), shell=False)
+    # Get uid for www-data and chown /srv/fiche
+    uid = pwd.getpwnam('www-data').pw_uid
+    os.chown(options('git-deploy').get('target'), uid, -1)
 
     set_state('fiche.installed')
 
@@ -97,9 +114,12 @@ def render_systemd_conf():
       'fiche.installed')
 @when_not('fiche.available')
 def fiche_available():
+    """Start or restart fiche, set status and state
+    """
+    start_restart()
     # Set status
     status_set('active', 'Fiche is active at: %s' %
-               ("%s/%s" % (unit_public_ip(), config('fiche-server-port'))))
+               ("%s:%s" % (unit_public_ip(), config('fiche-server-port'))))
     set_state('fiche.available')
 
 
@@ -134,10 +154,12 @@ def fiche_port_changed():
 
     conf = config()
     # Close prev port
-    close_port(conf.previous('fiche-server-port'))
-    # Remove state to re-render nginx conf
-    remove_state('fiche.web.configured')
-    remove_state('fiche.available')
+    if conf.previous('port') and \
+       conf.previous('port') != config('port'):
+        close_port(conf.previous('port'))
+        # Remove state to re-render nginx conf
+        remove_state('fiche.web.configured')
+        remove_state('fiche.available')
 
 
 @when('config.changed.slug-size')
@@ -146,9 +168,11 @@ def fiche_slug_size_changed():
     """ React to slug-size changed
     """
     status_set('maintenance', 'Reconfiguring slug-size')
-    # Remove state to re-render systemd conf
-    remove_state('fiche.systemd.configured')
-    remove_state('fiche.available')
+    if conf.previous('slug-size') and \
+       conf.previous('slug-size') != config('slug-size'):
+        # Remove state to re-render systemd conf
+        remove_state('fiche.systemd.configured')
+        remove_state('fiche.available')
 
 
 @when('config.changed.buffer-size')
@@ -157,6 +181,8 @@ def fiche_buffer_size_changed():
     """ React to buffer-size changed
     """
     status_set('maintenance', 'Reconfiguring buffer-size')
-    # Remove state to re-render systemd conf
-    remove_state('fiche.systemd.configured')
-    remove_state('fiche.available')
+    if conf.previous('buffer-size') and \
+       conf.previous('buffer-size') != config('buffer-size'):
+        # Remove state to re-render systemd conf
+        remove_state('fiche.systemd.configured')
+        remove_state('fiche.available')
