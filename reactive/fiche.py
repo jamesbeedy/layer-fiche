@@ -134,7 +134,6 @@ def fiche_server_port_changed():
     """ React to fiche-server-port changed
     """
     status_set('maintenance', 'Reconfiguring fiche-server-port')
-
     conf = config()
     # Check and change open port, close prev port
     if conf.previous('fiche-server-port') and \
@@ -151,7 +150,6 @@ def fiche_port_changed():
     """ React to fiche front end port changed
     """
     status_set('maintenance', 'Reconfiguring fiche front end port')
-
     conf = config()
     # Close prev port
     if conf.previous('port') and \
@@ -168,6 +166,7 @@ def fiche_slug_size_changed():
     """ React to slug-size changed
     """
     status_set('maintenance', 'Reconfiguring slug-size')
+    conf = config()
     if conf.previous('slug-size') and \
        conf.previous('slug-size') != config('slug-size'):
         # Remove state to re-render systemd conf
@@ -181,6 +180,7 @@ def fiche_buffer_size_changed():
     """ React to buffer-size changed
     """
     status_set('maintenance', 'Reconfiguring buffer-size')
+    conf = config()
     if conf.previous('buffer-size') and \
        conf.previous('buffer-size') != config('buffer-size'):
         # Remove state to re-render systemd conf
