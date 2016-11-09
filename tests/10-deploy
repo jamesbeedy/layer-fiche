@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import amulet
 import requests
@@ -24,7 +24,7 @@ def netcat(host, port, content):
 class TestDeployment(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.deployment = amulet.Deployment(series='trusty')
+        cls.deployment = amulet.Deployment(series="xenial")
 
         cls.deployment.add('fiche')
         cls.deployment.configure('fiche', {'fiche-server-port': 9999})
@@ -42,7 +42,7 @@ class TestDeployment(unittest.TestCase):
 
     def test_1_verify_netcat(self):
         nc_resp = netcat(self.ipaddr, 9999, "test-txt")
-        nc_addr = str(nc_resp, "UTF-8").strip('\n')
+        nc_addr = nc_resp.encode("utf-8").strip('\n')
 
         response = requests.get(nc_addr)
         # Check for 500
